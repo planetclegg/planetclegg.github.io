@@ -1,8 +1,8 @@
 
 
-### OK Mike, so you want to play around with a raspberry pi....
+# OK Mike, so you want to play around with a raspberry pi....
 
-# probably the most confusing thing is all the options:
+## probably the most confusing thing is all the options:
 
 Right now there are three possible boards that I could recommend:
 
@@ -17,7 +17,7 @@ The 4 and 400 are considerably faster than the 3B+, the tradeoff is they are mor
 No matter which of these you get, you need some extra stuff to go with it. You can either acquire all this 
 separtely or you can buy a "kit" that might have some of this stuff in it:
 
-#To make a complete raspi client computer you'll need:
+## To make a complete raspi client computer you'll need:
 
 - a case (unless you get a 400).  the offical case is great, ~$5
 - a usb keyboard (unless you get a 400).  You can use any old USB keyboard if you happen to have a spare one
@@ -28,7 +28,7 @@ separtely or you can buy a "kit" that might have some of this stuff in it:
 
 You'll also need a seperate computer and a USB-to-MicroSD adapter (cheap) so you can install Raspbian (the operating system) on the microSD card.
 
-#Some suggestions:
+## Some suggestions:
 
 Locally, Microcenter sells RaspPI 3b+ and 4 boards at a discount, it's a loss leader for them.   they also sell everything else you could possibly need
 
