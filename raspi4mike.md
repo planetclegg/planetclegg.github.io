@@ -15,7 +15,7 @@ Right now there are three possible boards that I could recommend:
 Ignore the Pi Zero and A+ (which are underpowered and/or made for advanced scenarios), and all the other older models.
 
 The 4 and 400 are considerably faster than the 3B+, the tradeoff is they are more expensive and on the 4 you probably want to plan on adding something to deal with heat (either a fan or a giant heat sink).  They also use a little more power.
-(For what it's worth, I don't own a 4 yet.  I have several 3's and older running stuff on my network)
+(For what it's worth, I don't own a 4 yet.  I have several 3's and older running stuff on my network.  On the other hand, even the lowest-end 4 has more ram than the 3b+)
 
 No matter which of these you get, you need some extra stuff to go with it. You can either acquire all this 
 separtely or you can buy a "kit" that might have some of this stuff in it:
@@ -37,7 +37,7 @@ You'll also need a seperate computer and a USB-to-MicroSD adapter (cheap) so you
 
 Locally, Microcenter sells RaspPI 3b+ and 4 boards at a $10 discount, it's a loss leader for them.   they also sell everything else you could possibly need
 
-Typically the bare 3B+ board goes for $35, but microcenter sells it currently for $25
+Typically the bare 3B+ board goes for $35, but microcenter sells it currently for $25.  It has 1GB of ram.
 
 The pricing on the bare 4 board is ~$35-45 for 2gb, $55 for 4gb, $75 for 8gb (ram)  microcenter is $10 less for each
 
