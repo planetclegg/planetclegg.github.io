@@ -6,10 +6,9 @@
 
 Right now there are three possible boards that I could recommend:
 
-Raspberry PI 3B+  (a year ago, this was the top of the line model)
-Raspberry PI 4 (current top of the line model, and comes in different RAM capacities 2gb, 4gb, 8gb)
-Raspberry PI 400 (This is a keyboard with raspberry PI 4 hardware inside it.   Super new, hard to get right now)
-
+- Raspberry PI 3B+  (a year ago, this was the top of the line model)
+- Raspberry PI 4 (current top of the line model, and comes in different RAM capacities 2gb, 4gb, 8gb)
+- Raspberry PI 400 (This is a keyboard with raspberry PI 4 hardware inside it.   Super new, hard to get right now)
 
 The 4 and 400 are considerably faster than the 3B+, the tradeoff is they are more expensive and you probably want to plan on adding something to deal with heat (either a fan or a giant heat sink), and the use more power.
 
@@ -19,7 +18,7 @@ No matter which of these you get, you need some extra stuff to go with it. You c
 separtely or you can buy a "kit" that might have some of this stuff in it:
 
 
-So you'll need:
+#To make a complete raspi client computer you'll need:
 
 - a case (unless you get a 400).  the offical case is great, ~$5
 - a usb keyboard (unless you get a 400).  You can use any old USB keyboard if you happen to have a spare one
@@ -30,8 +29,7 @@ So you'll need:
 
 You'll also need a seperate computer and a USB-to-MicroSD adapter (cheap) so you can install Raspbian (the operating system) on the microSD card.
 
-
-Some suggestions:
+#Some suggestions:
 
 Locally, Microcenter sells RaspPI 3b+ and 4 boards at a discount, it's a loss leader for them.   they also sell everything else you could possibly need
 
