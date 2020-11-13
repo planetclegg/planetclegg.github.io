@@ -17,7 +17,6 @@ The 4 and 400 are considerably faster than the 3B+, the tradeoff is they are mor
 No matter which of these you get, you need some extra stuff to go with it. You can either acquire all this 
 separtely or you can buy a "kit" that might have some of this stuff in it:
 
-
 #To make a complete raspi client computer you'll need:
 
 - a case (unless you get a 400).  the offical case is great, ~$5
