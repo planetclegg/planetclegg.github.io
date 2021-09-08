@@ -38,7 +38,8 @@ function go() {
 
     let dpi_x = $('#inchdiv').offsetWidth;
     let dpi_y = $('#inchdiv').offsetHeight;
-    console.log(`measured inch div: ${dpi_x} x ${dpi_y}`);
+    dump(`measured inch div: ${dpi_x} x ${dpi_y}`);
+
     // still 96dpi on high res display.
 
     //sizeCanvas(); // todo: update
@@ -129,6 +130,12 @@ function go() {
             $('#btn-update').click();
     };
 
+
+    function dump(s)
+    {
+        let output = $('#output');
+        output.textContent += `>> ${s} \n`;
+    }
 }
 
 
