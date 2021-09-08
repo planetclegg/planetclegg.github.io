@@ -80,7 +80,7 @@ function go() {
         let zoom = $('#input-zoom').value;
         canvasWidth = parseInt(x);
         canvasHeight = parseInt(y);
-        canvasZoom = parseInt(zoom);
+        canvasZoom = parseFloat(zoom);
         dump(`setting ${canvasWidth} x ${canvasHeight}, zoom ${canvasZoom}`);
         canvas.setDimensions({ width: canvasWidth , height: canvasHeight });
         //canvas.getWidth() * scaleRatio
