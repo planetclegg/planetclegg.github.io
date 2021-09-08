@@ -14,14 +14,15 @@
 <body>
 
 <div>
+    zoom: <input id="input-zoom" type="text" value="1">
     X: <input id="input-x-dim" type="text" value="500">
     Y: <input id="input-y-dim" type="text" value="500">
     <button id="btn-update">Update</button>
 </div>
 <div id='inchdiv' style='height: 1in; left: -100%; position: absolute; top: -100%; width: 1in;'></div>
 
-<div id="canvas1-container" style="border: black solid 1px">
-    <canvas id="c1" ></canvas>
+<div id="canvas1-container" >
+    <canvas id="c1" style="border: black solid 1px" ></canvas>
 </div>
 
 <pre>
@@ -38,17 +39,20 @@ function go() {
     };
 
     dump('testfire');
-    let dpi_x = $('#inchdiv').offsetWidth;
-    let dpi_y = $('#inchdiv').offsetHeight;
-    dump(`measured inch div: ${dpi_x} x ${dpi_y}`);
+    let dpix = $('#inchdiv').offsetWidth;
+    let dpiy = $('#inchdiv').offsetHeight;
+    let dpr = window.devicePixelRatio;
+    dump(`measured screen inch (dpi): ${dpix} x ${dpiy}, DPR is ${dpr}`);
+
     // still 96dpi on high res display.
 
     //sizeCanvas(); // todo: update
     let canvas = this.__canvas = new fabric.Canvas('c1');
     canvas.preserveObjectStacking = true;  // don't change z-order on select
-    var currentAsset = 116;
-    var canvasWidth=100;
-    var canvasHeight=100;
+    let currentAsset = 116;
+    let canvasWidth=100;
+    let canvasHeight=100;
+    let canvasZoom =1;
 
     getUrlParams();
 
@@ -58,11 +62,14 @@ function go() {
         const urlParams = new URLSearchParams(queryString);
         const x = urlParams.get('x')
         const y = urlParams.get('y')
+        const zoom = urlParams.get('zoom')
         if (x && y)
         {
             $('#input-x-dim').value =x;
             $('#input-y-dim').value =y;
         }
+        if (zoom)
+            $('#input-zoom').value = zoom;
         adjustSizeAndLoad();
     }
 
@@ -70,11 +77,14 @@ function go() {
     {
         let x = $('#input-x-dim').value;
         let y = $('#input-y-dim').value;
+        let zoom = $('#input-zoom').value;
         canvasWidth = parseInt(x);
         canvasHeight = parseInt(y);
-        console.log(`setting ${canvasWidth} x ${canvasHeight}`);
-        canvas.setHeight(canvasHeight);
-        canvas.setWidth(canvasWidth);
+        canvasZoom = parseInt(zoom);
+        dump(`setting ${canvasWidth} x ${canvasHeight}, zoom ${canvasZoom}`);
+        canvas.setDimensions({ width: canvasWidth , height: canvasHeight });
+        //canvas.getWidth() * scaleRatio
+        canvas.setZoom(canvasZoom);
         loadSvg1(assets[currentAsset]);
 
     }
@@ -120,7 +130,16 @@ function go() {
         $('#input-y-dim').value = $('#input-x-dim').value
     };
 
+    $('#input-x-dim').onkeypress =function(e){
+        if(e.keyCode===13)
+            $('#btn-update').click();
+    };
+
     $('#input-y-dim').onkeypress =function(e){
+        if(e.keyCode===13)
+            $('#btn-update').click();
+    };
+    $('#input-zoom').onkeypress =function(e){
         if(e.keyCode===13)
             $('#btn-update').click();
     };
