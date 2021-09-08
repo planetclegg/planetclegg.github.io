@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="content/js/fabric.js"></script>
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans:400,400italic,600,600italic,700,700italic" media="screen">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Bitter:400,400italic,700" media="screen">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lobster|Cabin:400,700" media="screen">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
+    <link href="//fonts.googleapis.com/css?family=Amatic+SC|Comfortaa|Cookie|Graduate|Oswald|Roboto+Slab|Courgette|Great+Vibes" rel="stylesheet">
+
+</head>
+<body>
+
+<div>
+    X: <input id="input-x-dim" type="text" value="100">
+    Y: <input id="input-y-dim" type="text" value="100">
+    <button id="btn-update">Update</button>
+</div>
+<div id='inchdiv' style='height: 1in; left: -100%; position: absolute; top: -100%; width: 1in;'></div>
+
+<div id="canvas1-container" style="border: black solid 1px">
+    <canvas id="c1" ></canvas>
+</div>
+
+<div id="output">
+
+</div>
+
+<script>
+    window.addEventListener('load', go)
+
+function go() {
+    var $ = function (id) {
+        return document.querySelector(id);
+    };
+
+    let dpi_x = $('#inchdiv').offsetWidth;
+    let dpi_y = $('#inchdiv').offsetHeight;
+    console.log(`measured inch div: ${dpi_x} x ${dpi_y}`);
+    // still 96dpi on high res display.
+
+    //sizeCanvas(); // todo: update
+    let canvas = this.__canvas = new fabric.Canvas('c1');
+    canvas.preserveObjectStacking = true;  // don't change z-order on select
+    var currentAsset = 116;
+    var canvasWidth=100;
+    var canvasHeight=100;
+
+    getUrlParams();
+
+    function getUrlParams() {
+        const queryString = window.location.search;
+        console.log(queryString);
+        const urlParams = new URLSearchParams(queryString);
+        const x = urlParams.get('x')
+        const y = urlParams.get('y')
+        if (x && y)
+        {
+            $('#input-x-dim').value =x;
+            $('#input-y-dim').value =y;
+            adjustSizeAndLoad();
+            // canvasWidth = parseInt(x);
+            // canvasHeight = parseInt(y);
+            // canvas.setHeight(canvasHeight);
+            // canvas.setWidth(canvasWidth);
+            // loadSvg1(assets[currentAsset]);
+        }
+    }
+
+    function adjustSizeAndLoad()
+    {
+        let x = $('#input-x-dim').value;
+        let y = $('#input-y-dim').value;
+        canvasWidth = parseInt(x);
+        canvasHeight = parseInt(y);
+        console.log(`setting ${canvasWidth} x ${canvasHeight}`);
+        canvas.setHeight(canvasHeight);
+        canvas.setWidth(canvasWidth);
+        loadSvg1(assets[currentAsset]);
+
+    }
+
+    $('#btn-update').onclick = function () {
+        //loadSvg1(assets[currentAsset],currentAsset);
+        adjustSizeAndLoad();
+    }
+
+    function loadSvg1(url)
+    {
+        fetch(url)
+            .then(r => r.text())
+            .then(text => {
+                let svgString = text;
+                loadCanvas(svgString);
+            })
+            .catch(console.error.bind(console));
+    }
+
+    function loadCanvas(svgString) {
+        canvas.clear();
+        canvas.preserveObjectStacking = true;
+        let group = [];
+        fabric.loadSVGFromString(svgString,function(objects,options) {
+            let loadedObjects = fabric.util.groupSVGElements(objects, options);
+            loadedObjects.set({
+                left: 0,
+                top: 0,
+            });
+
+            canvas.add(loadedObjects);
+            loadedObjects.scaleToWidth(canvasWidth, true);
+
+            //loadedObjects.ungroupOnCanvas();
+            canvas.renderAll();
+
+        },function(item, object) {
+            object.set('id',item.getAttribute('id'));
+            group.push(object);
+        });
+    }
+    $('#input-x-dim').onblur =function(){
+        $('#input-y-dim').value = $('#input-x-dim').value
+    };
+
+    $('#input-y-dim').onkeypress =function(e){
+        if(e.keyCode==13)
+            $('#btn-update').click();
+    };
+
+}
+
+
+var assets= [
+    '/assets/template-defaultmask-large.svg',
+    '/assets/template-large-chevron.svg',
+    '/assets/template-large-cubes.svg',
+    '/assets/template-large-flowers.svg',
+    '/assets/template-large-lightningbolts.svg',
+    '/assets/template-large-plaid.svg',
+    '/assets/template-large-polkadots.svg',
+    '/assets/template-large-lightpolkadotsgrey.svg',
+    '/assets/template-large-lightpolkadotspink.svg',
+    '/assets/template-large-stripes.svg',
+    '/assets/template-large-mermaidscales.svg',
+    '/assets/template-large-paintsplatters.svg',
+    '/assets/template-large-baseball.svg',
+    '/assets/template-large-basketball.svg',
+    '/assets/template-large-football.svg',
+    '/assets/template-large-soccerball.svg',
+    '/assets/template-large-camoblue.svg',
+    '/assets/template-large-camogrey.svg',
+    '/assets/template-large-candycamo.svg',
+    '/assets/template-large-candy.svg',
+    '/assets/template-large-icepops.svg',
+    '/assets/template-large-sourcandy.svg',
+    '/assets/template-large-chalkpalette.svg',
+    '/assets/template-large-breezepalette.svg',
+    '/assets/template-large-jewelpalette.svg',
+    '/assets/template-large-tropicalpalette.svg',
+    '/assets/template-large-emojis.svg',
+    '/assets/template-large-gems.svg',
+    '/assets/template-large-racecars.svg',
+    '/assets/template-large-tiedye.svg',
+    '/assets/template-large-90s.svg',
+    '/assets/template-large-donuts.svg',
+    '/assets/template-large-fastfood.svg',
+    '/assets/template-large-girlycrossbones.svg',
+    '/assets/template-large-koifish.svg',
+    '/assets/template-large-popart.svg',
+    '/assets/template-large-school.svg',
+    '/assets/template-large-skateboards.svg',
+    '/assets/template-large-sloth.svg',
+    '/assets/template-large-spaceunicorn.svg',
+    '/assets/template-large-sports.svg',
+    '/assets/template-large-tattoos.svg',
+    '/assets/template-defaultmask-small.svg',
+    '/assets/template-small-chevron.svg',
+    '/assets/template-small-cubes.svg',
+    '/assets/template-small-flowers.svg',
+    '/assets/template-small-lightningbolts.svg',
+    '/assets/template-small-plaid.svg',
+    '/assets/template-small-polkadots.svg',
+    '/assets/template-small-lightpolkadotsgrey.svg',
+    '/assets/template-small-lightpolkadotspink.svg',
+    '/assets/template-small-stripes.svg',
+    '/assets/template-small-mermaidscales.svg',
+    '/assets/template-small-paintsplatters.svg',
+    '/assets/template-small-baseball.svg',
+    '/assets/template-small-basketball.svg',
+    '/assets/template-small-football.svg',
+    '/assets/template-small-soccerball.svg',
+    '/assets/template-small-camoblue.svg',
+    '/assets/template-small-camogrey.svg',
+    '/assets/template-small-candycamo.svg',
+    '/assets/template-small-candy.svg',
+    '/assets/template-small-icepops.svg',
+    '/assets/template-small-sourcandy.svg',
+    '/assets/template-small-chalkpalette.svg',
+    '/assets/template-small-breezepalette.svg',
+    '/assets/template-small-jewelpalette.svg',
+    '/assets/template-small-tropicalpalette.svg',
+    '/assets/template-small-emojis.svg',
+    '/assets/template-small-gems.svg',
+    '/assets/template-small-racecars.svg',
+    '/assets/template-small-tiedye.svg',
+    '/assets/template-small-90s.svg',
+    '/assets/template-small-donuts.svg',
+    '/assets/template-small-fastfood.svg',
+    '/assets/template-small-girlycrossbones.svg',
+    '/assets/template-small-koifish.svg',
+    '/assets/template-small-popart.svg',
+    '/assets/template-small-school.svg',
+    '/assets/template-small-skateboards.svg',
+    '/assets/template-small-sloth.svg',
+    '/assets/template-small-spaceunicorn.svg',
+    '/assets/template-small-sports.svg',
+    '/assets/template-small-tattoos.svg',
+    '/assets/template-default.svg',
+    '/assets/template-open1.svg',
+    '/assets/template-closed1.svg',
+    '/assets/template-closed2.svg',
+    '/assets/template-countersafety1.svg',
+    '/assets/template-countersafety2.svg',
+    '/assets/template-curbsidepickup1.svg',
+    '/assets/template-curbsidepickup2.svg',
+    '/assets/template-curbsidepickup3.svg',
+    '/assets/template-curbsidepickup4.svg',
+    '/assets/template-curbsidepickup5.svg',
+    '/assets/template-curbsidepickup6.svg',
+    '/assets/template-curbsidepickup7.svg',
+    '/assets/template-feetcircle1.svg',
+    '/assets/template-feetcircle3.svg',
+    '/assets/template-feetcircle4.svg',
+    '/assets/template-feetcircle5.svg',
+    '/assets/template-feetcircle6.svg',
+    '/assets/template-feetcircle7.svg',
+    '/assets/template-feetcircle8.svg',
+    '/assets/template-feetcircle9.svg',
+    '/assets/template-elevator1.svg',
+    '/assets/template-elevator2.svg',
+    '/assets/template-elevator3.svg',
+    '/assets/template-elevator4.svg',
+    '/assets/template-elevator5.svg',
+    '/assets/template-novisitors1.svg',
+    '/assets/template-publicadvisory1.svg',
+    '/assets/template-publicadvisory2.svg',
+    '/assets/template-publicadvisory3.svg',
+    '/assets/template-publicadvisory4.svg',
+    '/assets/template-publicadvisory5.svg',
+    '/assets/template-publicadvisory6.svg',
+    '/assets/template-publicadvisory7.svg',
+    '/assets/template-publicadvisory8.svg',
+    '/assets/template-stopsign1.svg',
+    '/assets/template-waithere1.svg',
+    '/assets/template-stopsign3.svg',
+    '/assets/template-storehours1.svg',
+    '/assets/template-storehours2.svg',
+    '/assets/template-strongertogether1.svg',
+    '/assets/template-thankyou1.svg',
+    '/assets/template-arrow1.svg',
+    '/assets/template-arrow2.svg',
+    '/assets/template-arrow3.svg',
+    '/assets/template-arrow4.svg',
+    '/assets/template-wedeliver1.svg',
+    '/assets/template-wedeliver2.svg',
+    '/assets/template-shop1.svg',
+    '/assets/template-wedding1.svg',
+    '/assets/template-wine1.svg',
+    '/assets/template-wine2.svg',
+    '/assets/template-barber1.svg',
+    '/assets/template-florist1.svg',
+    '/assets/template-bakery1.svg',
+    '/assets/template-tailor1.svg',
+    '/assets/template-auto1.svg',
+    '/assets/template-jam1.svg',
+    '/assets/template-boardgame1.svg',
+    '/assets/template-candle1.svg',
+    '/assets/template-cupcake1.svg',
+    '/assets/template-foodtruck1.svg',
+    '/assets/template-fruitstand1.svg',
+    '/assets/template-groomer1.svg',
+    '/assets/template-realtor1.svg',
+    '/assets/template-sign1.svg',
+    '/assets/template-jewelry1.svg',
+];
+</script>
+
+</body>
+</html>
