@@ -14,8 +14,8 @@
 <body>
 
 <div>
-    X: <input id="input-x-dim" type="text" value="100">
-    Y: <input id="input-y-dim" type="text" value="100">
+    X: <input id="input-x-dim" type="text" value="1500">
+    Y: <input id="input-y-dim" type="text" value="1500">
     <button id="btn-update">Update</button>
 </div>
 <div id='inchdiv' style='height: 1in; left: -100%; position: absolute; top: -100%; width: 1in;'></div>
@@ -61,13 +61,8 @@ function go() {
         {
             $('#input-x-dim').value =x;
             $('#input-y-dim').value =y;
-            adjustSizeAndLoad();
-            // canvasWidth = parseInt(x);
-            // canvasHeight = parseInt(y);
-            // canvas.setHeight(canvasHeight);
-            // canvas.setWidth(canvasWidth);
-            // loadSvg1(assets[currentAsset]);
         }
+        adjustSizeAndLoad();
     }
 
     function adjustSizeAndLoad()
