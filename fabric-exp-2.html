@@ -88,9 +88,8 @@ function go() {
     {
         fetch(url)
             .then(r => r.text())
-            .then(text => {
-                let svgString = text;
-                loadCanvas(svgString);
+            .then(svgText => {
+                loadCanvas(svgText);
             })
             .catch(console.error.bind(console));
     }
@@ -122,10 +121,9 @@ function go() {
     };
 
     $('#input-y-dim').onkeypress =function(e){
-        if(e.keyCode==13)
+        if(e.keyCode===13)
             $('#btn-update').click();
     };
-
 
     function dump(s)
     {
