@@ -14,8 +14,8 @@
 <body>
 
 <div>
-    X: <input id="input-x-dim" type="text" value="1500">
-    Y: <input id="input-y-dim" type="text" value="1500">
+    X: <input id="input-x-dim" type="text" value="500">
+    Y: <input id="input-y-dim" type="text" value="500">
     <button id="btn-update">Update</button>
 </div>
 <div id='inchdiv' style='height: 1in; left: -100%; position: absolute; top: -100%; width: 1in;'></div>
@@ -24,10 +24,11 @@
     <canvas id="c1" ></canvas>
 </div>
 
+<pre>
 <div id="output">
 
 </div>
-
+</pre>
 <script>
     window.addEventListener('load', go)
 
@@ -36,10 +37,10 @@ function go() {
         return document.querySelector(id);
     };
 
+    dump('testfire');
     let dpi_x = $('#inchdiv').offsetWidth;
     let dpi_y = $('#inchdiv').offsetHeight;
     dump(`measured inch div: ${dpi_x} x ${dpi_y}`);
-
     // still 96dpi on high res display.
 
     //sizeCanvas(); // todo: update
