@@ -46,6 +46,10 @@ function go() {
 
     // still 96dpi on high res display.
 
+
+    try {
+
+
     //sizeCanvas(); // todo: update
     let canvas = this.__canvas = new fabric.Canvas('c1');
     canvas.preserveObjectStacking = true;  // don't change z-order on select
@@ -53,6 +57,7 @@ function go() {
     let canvasWidth=100;
     let canvasHeight=100;
     let canvasZoom =1;
+
 
     getUrlParams();
 
@@ -144,11 +149,19 @@ function go() {
             $('#btn-update').click();
     };
 
+    }
+    catch (e)
+    {
+        dump(e);
+        dump(e.stack);
+    }
     function dump(s)
     {
         let output = $('#output');
         output.textContent += `>> ${s} \n`;
     }
+
+
 }
 
 
