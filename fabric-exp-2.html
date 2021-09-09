@@ -40,7 +40,7 @@ function go() {
         return document.querySelector(id);
     };
 
-    dump('testfire v4');
+    dump('testfire v5');
     let dpix = $('#inchdiv').offsetWidth;
     let dpiy = $('#inchdiv').offsetHeight;
     let dpr = window.devicePixelRatio;
@@ -48,8 +48,6 @@ function go() {
 
     // still 96dpi on high res display.
 
-
-    try {
 
 
     //sizeCanvas(); // todo: update
@@ -61,8 +59,15 @@ function go() {
     let canvasZoom =1;
 
 
-    getUrlParams();
+    try {
 
+        getUrlParams();
+    }
+    catch (e)
+        {
+            dump(e);
+            dump(e.stack);
+        }
     function getUrlParams() {
         const queryString = window.location.search;
         console.log(queryString);
@@ -151,12 +156,8 @@ function go() {
             $('#btn-update').click();
     };
 
-    }
-    catch (e)
-    {
-        dump(e);
-        dump(e.stack);
-    }
+
+
     function dump(s)
     {
         let output = $('#output');
