@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSL to SVG Renderer</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        textarea { width: 100%; height: 150px; }
+        #svgContainer { border: 1px solid #ccc; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Interval DSL to SVG Renderer</h2>
+    <textarea id="dslInput">
+window 0 100   # horizontal window, must be specified
+barHeight 20
+lineWidth 3
+spacing 20 # vertical spacing between intervals
+
+interval 1 10 20 decom   'v1'
+interval 2 20 40 superseded    'v2'
+interval 3 30 40 decom    'v3'
+interval 4 40 null published 'v4'
+interval 5 50 60 decom 'v5'
+interval 6 60 null decom 'v6'
+interval 7 70 null decom 'v6'
+
+</textarea>
+    <br>
+    <button onclick="renderSVG()">Generate SVG</button>
+    <label><input type="checkbox" id="autoUpdate" onchange="toggleAutoUpdate()"> Auto-update</label>
+    <div id="svgContainer"></div>
+
+    <script>
+        let autoUpdateEnabled = false;
+        function toggleAutoUpdate() {
+            autoUpdateEnabled = document.getElementById('autoUpdate').checked;
+        }
+        function handleInputChange() {
+            if (autoUpdateEnabled) {
+                renderSVG();
+            }
+        }
+        function parseDSL(dsl) {
+            let lines = dsl.split("\n").map(line => line.trim()).filter(line => line && !line.startsWith("#"));
+            let windowMin = 0, windowMax = 100;
+            let barHeight = 20, lineWidth = 3, spacing = 20;
+            let intervals = [];
+
+            lines.forEach(line => {
+                if (line.startsWith("window")) {
+                    [_, windowMin, windowMax] = line.split(/\s+/);
+                    windowMin = parseFloat(windowMin);
+                    windowMax = parseFloat(windowMax);
+                } else if (line.startsWith("barHeight")) {
+                    barHeight = parseFloat(line.split(/\s+/)[1]);
+                } else if (line.startsWith("lineWidth")) {
+                    lineWidth = parseFloat(line.split(/\s+/)[1]);
+                } else if (line.startsWith("spacing")) {
+                    spacing = parseFloat(line.split(/\s+/)[1]);
+                } else if (line.startsWith("interval")) {
+                    let match = line.match(/interval (\d+)\s+(\S+)\s+(\S+)\s+(\S+)\s+'(.+)'/);
+                    if (match) {
+                        let [, ordinal, start, end, status, label] = match;
+                        start = start === "null" ? windowMin : parseFloat(start);
+                        end = end === "null" ? windowMax : parseFloat(end);
+                        intervals.push({ ordinal: parseInt(ordinal), start, end, status, label });
+                    }
+                }
+            });
+            return { windowMin, windowMax, barHeight, lineWidth, spacing, intervals };
+        }
+
+        function renderSVG() {
+            let dsl = document.getElementById("dslInput").value;
+            let { windowMin, windowMax, barHeight, lineWidth, spacing, intervals } = parseDSL(dsl);
+            
+            let width = window.innerWidth * 0.95;
+            let height = intervals.length * (barHeight + spacing) + 50;
+
+            let scaleX = width / (windowMax - windowMin);
+            
+            let svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">`;
+            
+            intervals.sort((a, b) => a.ordinal - b.ordinal).forEach((interval, index) => {
+                let y = 50 + index * (barHeight + spacing);
+
+                let x1 = (interval.start - windowMin) * scaleX;
+                let x2 = (interval.end - windowMin) * scaleX;
+                let color = "gray" //interval.status === "active" ? "green" : interval.status === "decom" ? "red" : "gray";
+                let strokeDash = interval.status.toLowerCase().startsWith("decom") ? "5,5" : "";
+                
+                svg += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${color}" stroke-width="${lineWidth}" stroke-dasharray="${strokeDash}" />`;
+                
+                svg += `<line x1="${x1}" y1="${y-barHeight/2}" x2="${x1}" y2="${y+barHeight/2}" stroke="black" stroke-width="${lineWidth}" stroke-dasharray="${strokeDash}" />`;
+                
+                if (interval.end === windowMax) {
+                    svg += `<polygon points="${x2},${y} ${x2-10},${y-5} ${x2-10},${y+5}" fill="black" />`;
+                } else {
+                    svg += `<line x1="${x2}" y1="${y-barHeight/2}" x2="${x2}" y2="${y+barHeight/2}" stroke="black" stroke-width="${lineWidth}" stroke-dasharray="${strokeDash}" />`;
+                }
+                
+                svg += `<text x="${(x1 + x2) / 2}" y="${y - 10}" font-size="14" text-anchor="middle">${interval.status}</text>`;
+                svg += `<text x="${(x1 + x2) / 2}" y="${y + 15}" font-size="14" text-anchor="middle">${interval.label}</text>`;
+            });
+            
+            svg += `</svg>`;
+            document.getElementById("svgContainer").innerHTML = svg;
+        }
+    </script>
+</body>
+</html>
