@@ -36,7 +36,7 @@ interval 7  24  xx  -decom     'v7'
     <div  id="svgContainer" style="margin:1em; text-align:center;"></div>
 
     <script>
-        document.getElementById('dslInput').addEventListener('input', renderSVG);
+        document.getElementById('dslInput').addEventListener('input', handleInputChange);
 
         let autoUpdateEnabled = false;
         function toggleAutoUpdate() {
