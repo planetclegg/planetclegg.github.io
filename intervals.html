@@ -5,34 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DSL to SVG Renderer</title>
     <style>
-        body { font-family: Arial, sans-serif; }
+        body { font-family: Times New Roman, sans-serif; }
         textarea { width: 100%; height: 150px; }
         #svgContainer { border: 1px solid #ccc; margin-top: 10px; }
     </style>
 </head>
 <body>
-    <h2>Interval DSL to SVG Renderer</h2>
-    <textarea id="dslInput">
-window 0 100   # horizontal window, must be specified
-barHeight 20
-lineWidth 3
-spacing 20 # vertical spacing between intervals
+    <span>Interval-lang to SVG Renderer</span>
+    <textarea id="dslInput" style="resize: vertical;">
+window 1 30   # horizontal window (start/end), must be specified
+barHeight 30
+lineWidth 2
+spacing 25 # vertical spacing between intervals
+showValues  #comment out to remove start and end values
 
-interval 1 10 20 decom   'v1'
-interval 2 20 40 superseded    'v2'
-interval 3 30 40 decom    'v3'
-interval 4 40 null published 'v4'
-interval 5 50 60 decom 'v5'
-interval 6 60 null decom 'v6'
-interval 7 70 null decom 'v6'
-
+#interval [row] [start] [end] [status] [label]  # if status starts with: '-' = interval will be dashed, '?' = hidden 
+interval 1   1   4  -decom     'v1'
+interval 2   4  12  superseded 'v2'
+interval 3   8  12  -decom     'v3'
+interval 4  12  xx  published  'v4'
+interval 5  16  20  -decom     'v5'
+interval 6  20  xx  -decom     'v6'
+interval 7  24  xx  -decom     'v7'
 </textarea>
-    <br>
+    <div class="divider" style="height: 5px; background-color: #ccc; cursor: row-resize;"></div>
+    
     <button onclick="renderSVG()">Generate SVG</button>
     <label><input type="checkbox" id="autoUpdate" onchange="toggleAutoUpdate()"> Auto-update</label>
-    <div id="svgContainer"></div>
+    <button style="position: absolute; right: 0;" onClick="downloadSVG()">Download SVG</button>
+    <div  id="svgContainer" style="margin:1em; text-align:center;"></div>
 
     <script>
+        document.getElementById('dslInput').addEventListener('input', renderSVG);
+
         let autoUpdateEnabled = false;
         function toggleAutoUpdate() {
             autoUpdateEnabled = document.getElementById('autoUpdate').checked;
@@ -42,19 +47,35 @@ interval 7 70 null decom 'v6'
                 renderSVG();
             }
         }
+
+        function downloadSVG() {
+          const svg = document.getElementById('svgContainer').innerHTML;
+          const header = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>\r\n<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\r\n`
+          const blob = new Blob([header+svg.toString()]);
+          const element = document.createElement("a");
+          element.download = "intervals.svg";
+          element.href = window.URL.createObjectURL(blob);
+          element.click();
+          element.remove();
+        }
+
         function parseDSL(dsl) {
             let lines = dsl.split("\n").map(line => line.trim()).filter(line => line && !line.startsWith("#"));
             let windowMin = 0, windowMax = 100;
             let barHeight = 20, lineWidth = 3, spacing = 20;
+            let showValues = false;
             let intervals = [];
 
             lines.forEach(line => {
+                line = line.replace(/#.*/,"")
                 if (line.startsWith("window")) {
                     [_, windowMin, windowMax] = line.split(/\s+/);
                     windowMin = parseFloat(windowMin);
                     windowMax = parseFloat(windowMax);
                 } else if (line.startsWith("barHeight")) {
                     barHeight = parseFloat(line.split(/\s+/)[1]);
+                } else if (line.startsWith("showValues")) {
+                    showValues = true;
                 } else if (line.startsWith("lineWidth")) {
                     lineWidth = parseFloat(line.split(/\s+/)[1]);
                 } else if (line.startsWith("spacing")) {
@@ -63,51 +84,76 @@ interval 7 70 null decom 'v6'
                     let match = line.match(/interval (\d+)\s+(\S+)\s+(\S+)\s+(\S+)\s+'(.+)'/);
                     if (match) {
                         let [, ordinal, start, end, status, label] = match;
-                        start = start === "null" ? windowMin : parseFloat(start);
-                        end = end === "null" ? windowMax : parseFloat(end);
+                        start = start === "null" ? NaN : parseFloat(start);
+                        end = end === "null" ? NaN : parseFloat(end);
                         intervals.push({ ordinal: parseInt(ordinal), start, end, status, label });
                     }
                 }
             });
-            return { windowMin, windowMax, barHeight, lineWidth, spacing, intervals };
+            return { windowMin, windowMax, barHeight, lineWidth, spacing, showValues, intervals };
         }
 
         function renderSVG() {
             let dsl = document.getElementById("dslInput").value;
-            let { windowMin, windowMax, barHeight, lineWidth, spacing, intervals } = parseDSL(dsl);
+            let { windowMin, windowMax, barHeight, lineWidth, spacing, showValues, intervals } = parseDSL(dsl);
             
             let width = window.innerWidth * 0.95;
             let height = intervals.length * (barHeight + spacing) + 50;
 
-            let scaleX = width / (windowMax - windowMin);
+            let scaleX = 0.98 * width / (windowMax - windowMin);
             
-            let svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">`;
+            let svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg" style="margin:10px;">\r\n`;
             
             intervals.sort((a, b) => a.ordinal - b.ordinal).forEach((interval, index) => {
                 let y = 50 + index * (barHeight + spacing);
+                let start =  isNaN(interval.start) ? windowMin : interval.start;
+                let end = isNaN(interval.end) ? windowMax : interval.end;
 
-                let x1 = (interval.start - windowMin) * scaleX;
-                let x2 = (interval.end - windowMin) * scaleX;
+                let x1 = 5+myRound((start - windowMin) * scaleX);
+                let x2 = 5+myRound((end - windowMin) * scaleX);
+
                 let color = "gray" //interval.status === "active" ? "green" : interval.status === "decom" ? "red" : "gray";
-                let strokeDash = interval.status.toLowerCase().startsWith("decom") ? "5,5" : "";
+                let strokeDash = interval.status.startsWith("-") ? "5,5" : "";
+                let visibility = interval.status.startsWith("?") ? "hidden" : "visible";
                 
-                svg += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${color}" stroke-width="${lineWidth}" stroke-dasharray="${strokeDash}" />`;
+                svg += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${color}" stroke-width="${lineWidth}" stroke-dasharray="${strokeDash}" visibility="${visibility}" />\r\n`;
                 
-                svg += `<line x1="${x1}" y1="${y-barHeight/2}" x2="${x1}" y2="${y+barHeight/2}" stroke="black" stroke-width="${lineWidth}" stroke-dasharray="${strokeDash}" />`;
-                
-                if (interval.end === windowMax) {
-                    svg += `<polygon points="${x2},${y} ${x2-10},${y-5} ${x2-10},${y+5}" fill="black" />`;
+                if (isNaN(interval.start)) {
+                    svg += `<polygon points="${x1},${y} ${x1+10},${y-5} ${x1+10},${y+5}" fill="black" visibility="${visibility}"/>\r\n`;
                 } else {
-                    svg += `<line x1="${x2}" y1="${y-barHeight/2}" x2="${x2}" y2="${y+barHeight/2}" stroke="black" stroke-width="${lineWidth}" stroke-dasharray="${strokeDash}" />`;
+                    svg += `<line x1="${x1}" y1="${y-barHeight/2}" x2="${x1}" y2="${y+barHeight/2}" stroke="black" stroke-width="${lineWidth}" stroke-dasharray="${strokeDash}" visibility="${visibility}" />\r\n`;
                 }
+
+                // svg += `<line x1="${x1}" y1="${y-barHeight/2}" x2="${x1}" y2="${y+barHeight/2}" stroke="black" stroke-width="${lineWidth}" stroke-dasharray="${strokeDash}" />`;
                 
-                svg += `<text x="${(x1 + x2) / 2}" y="${y - 10}" font-size="14" text-anchor="middle">${interval.status}</text>`;
-                svg += `<text x="${(x1 + x2) / 2}" y="${y + 15}" font-size="14" text-anchor="middle">${interval.label}</text>`;
+                if (isNaN(interval.end)) {
+                    svg += `<polygon points="${x2},${y} ${x2-10},${y-5} ${x2-10},${y+5}" fill="black" visibility="${visibility}"/>\r\n`;
+                } else {
+                    svg += `<line x1="${x2}" y1="${y-barHeight/2}" x2="${x2}" y2="${y+barHeight/2}" stroke="black" stroke-width="${lineWidth}" stroke-dasharray="${strokeDash}" visibility="${visibility}"/>\r\n`;
+                }
+
+                let statusText = interval.status.replace(/^[-?]/,'') 
+                
+                svg += `<text x="${(x1 + x2) / 2}" y="${y - 10}" font-size="14" visibility="${visibility}" text-anchor="middle">${statusText} </text>\r\n`;
+                svg += `<text x="${(x1 + x2) / 2}" y="${y + 15}" font-size="14" visibility="${visibility}" text-anchor="middle">${interval.label}</text>\r\n`;
+                if (showValues)
+                {
+                    let numPos = (barHeight/2+3);
+                    svg += `<text x="${x1}" y="${y - numPos}" font-size="10" text-anchor="middle" visibility="${visibility}">${isNaN(interval.start)?'null':interval.start}</text>\r\n`;
+                    svg += `<text x="${x2}" y="${y - numPos}" font-size="10" text-anchor="middle" visibility="${visibility}">${isNaN(interval.end)?'null':interval.end}</text> \r\n`;
+                }
+
             });
             
             svg += `</svg>`;
             document.getElementById("svgContainer").innerHTML = svg;
         }
+
+        function myRound(num) {
+            return  Math.round((num + Number.EPSILON) * 100) / 100
+        }
+
+        renderSVG();
     </script>
 </body>
 </html>
