@@ -1,6 +1,6 @@
 ## A Brief Introduction to Cryptography
 
-This guide aims to show how cryptography evolved over time, focusing on the difference between **symmetric** and **asymmetric** (public-key) encryption, how they’re used together, and where hashing fits into the picture. Comments labeled **JEC** reflect historical or contextual notes.
+This guide aims to show how cryptography evolved over time, focusing on the difference between **symmetric** and **asymmetric** (public-key) encryption, how they’re used together, and where hashing fits into the picture. Comments labeled **JEC:** are my notes
 
 ---
 
