@@ -22,7 +22,7 @@ Cryptography is about sending information over potentially insecure channels wit
 
 - **Concept:** Uses the **same secret key** to encrypt and decrypt.  
 - **Examples (Historical to Modern):**  
-  - Ancient: Caesar cipher, Vigenère cipher  
+  - Ancient: Caesar cipher, Vigenère cipher (JEC: actually Caesar cipher is a keyless cipher I think)
   - WW2: Enigma machine  
   - Modern: AES (Advanced Encryption Standard, also known as Rijndael), DES (now outdated), 3DES, Blowfish  
 - **Advantages:**  
@@ -31,8 +31,7 @@ Cryptography is about sending information over potentially insecure channels wit
 - **Challenges:** Key distribution. Both sender and recipient must share the same key and keep it secret.
 
 **Key Sharing Problem**  
-Before the 1970s, the only known approach was to physically (or otherwise securely) deliver the key to the intended recipient. 
-**JEC note:** This required trusted couriers, elaborate secrecy protocols, etc.
+Before the 1970s, the only known approach was to physically (or otherwise securely) deliver the key to the intended recipient.  **JEC note:** This required trusted couriers, elaborate secrecy protocols, etc.
 
 ---
 
@@ -96,6 +95,8 @@ When a sender signs a document, they usually don’t sign the entire document di
      - **Authenticity:** Only someone with the private key could have produced that signature.  
      - **Integrity:** The document hasn’t been altered; any change would produce a different hash, invalidating the signature.
 
+**JEC:** note how the public/private keys are used differently (reversed) compared to public key encryption
+
 ## more background on hashing
 this is me manually using "shasum" a commandline utility for generating SHA hashes on my computer.
 file1.txt contains the text "this is a file.", file2.txt contains the text "This is a file." 
@@ -134,8 +135,6 @@ Larger sized hashes are generally better than smaller ones, but for large inputs
 SHA-1 replaced MD5, which was found to have a vulnerability
 SHA-256 has generally replaced SHA-1, and will probably be superseded by something else eventually.
 
-what makes a hashing algorithm a "cryptographically secure hashing algorithm" (aka Secure Hash Algorithm) is that it is considered *very* 
-difficult to easily produce a "hash collision".  A collision is where you find two files that are different, but still produce the same hash.
-if an attacker could do generate hash collisions easily, it breaks things like signing.  how resistant a hashing algorithm is to collision attacks
-is partly the output length (longer the better), and partly the internal algorithm of how it munges all the bits together from a file to produce the hash.
+what makes a hashing algorithm a "cryptographically secure hashing algorithm" (aka Secure Hash Algorithm) is that it is considered *very* difficult to easily produce a "hash collision".  A collision is where you find two files that are different, but still produce the same hash. if an attacker could do generate hash collisions easily, it breaks things like signing.  how resistant a hashing algorithm is to collision attacks
+is partly the output length (longer the better), and partly the internal algorithm of how it munges and tumbles all the bits together from a file to produce the hash for that file.
 
