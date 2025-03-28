@@ -1,4 +1,4 @@
-## cheatsheet
+# cheatsheet
 
 a cypher is an algorithm (which is something similar to a cookbook of instructions)
 
@@ -27,7 +27,7 @@ Different keys are used to encrypt and decrypt, and those keys are tied together
 
 
 
-### Encryption and Hashing are two different things, but they are both frequently used together and fall under the umbrella of Cryptography
+## Encryption and Hashing are two different things, but they are both frequently used together and fall under the umbrella of Cryptography
 
 Encryption is about sharing information privately.  Frequently you'll hear the names "Alice" and "Bob" used as placeholders for two
 entities that want to communicate over some medium privately.  the medium could be anything from a courier on horseback to the internet.
