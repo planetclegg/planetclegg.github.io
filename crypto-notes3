@@ -1,0 +1,78 @@
+## A Brief Introduction to Cryptography
+
+This guide aims to show how cryptography evolved over time, focusing on the difference between **symmetric** and **asymmetric** (public-key) encryption, how they’re used together, and where hashing fits into the picture. Comments labeled **JEC** reflect historical or contextual notes.
+
+---
+
+### 1. Basic Terminology
+
+- **Cipher (Cypher)** – An algorithm or set of instructions that describes how to transform readable text (plaintext) into unintelligible text (ciphertext), and in some cases, how to transform it back.  
+- **Plaintext** – The original, readable message or data.  
+- **Ciphertext** – Encrypted text that is not meant to be readable without decryption.
+
+---
+
+### 2. Cryptography’s Core Goal
+
+Cryptography is about sending information over potentially insecure channels without unwanted parties reading or altering it. Historically, if a messenger on horseback was intercepted, unencrypted messages would be exposed. Encryption prevents that.
+
+---
+
+### 3. Symmetric Key Cryptography (Shared Key)
+
+- **Concept:** Uses the **same secret key** to encrypt and decrypt.  
+- **Examples (Historical to Modern):**  
+  - Ancient: Caesar cipher, Vigenère cipher  
+  - WW2: Enigma machine  
+  - Modern: AES (Advanced Encryption Standard), DES (now outdated), 3DES, Blowfish  
+- **Advantages:**  
+  - Fast, computationally efficient  
+  - Suitable for bulk data encryption  
+- **Challenges:** Key distribution. Both sender and recipient must share the same key and keep it secret.
+
+**Key Sharing Problem**  
+Before the 1970s, the only known approach was to physically (or otherwise securely) deliver the key to the intended recipient. **JEC note:** This required trusted couriers, elaborate secrecy protocols, etc.
+
+---
+
+### 4. Asymmetric Key Cryptography (Public-Key)
+
+- **Concept:** Each participant generates a pair of keys: a **private key** (secret) and a **public key** (freely shared). The two keys are mathematically related but knowledge of the public key does **not** typically reveal the private key.  
+- **Encryption and Decryption:**  
+  - To send a secret message to someone, you use **their** public key to encrypt.  
+  - They use their matching **private key** to decrypt.  
+- **Digital Signatures:**  
+  - A sender can use their private key to “sign” a document.  
+  - Anyone with the sender’s public key can verify it was indeed signed by that private key.  
+- **Key Players:**  
+  - Whitfield Diffie and Martin Hellman pioneered public-key techniques in the 1970s.  
+- **Impact:** Solved the key distribution problem for symmetric encryption by letting users share secrets over insecure channels.
+
+---
+
+### 5. Hybrid Approach (Using Both)
+
+Most modern secure communication protocols (e.g., **TLS** for HTTPS) combine **asymmetric** and **symmetric** cryptography:
+1. **Asymmetric** methods securely exchange a new symmetric key.
+2. **Symmetric** methods then encrypt the main data stream for efficiency.
+
+**JEC note:** This solves the classic problem of sharing a secret key without couriers, while retaining the speed advantages of symmetric encryption.
+
+---
+
+### 6. Encryption vs. Hashing
+
+Although both belong under the “cryptography” umbrella, **encryption** and **hashing** serve different purposes:
+
+- **Encryption** – Ensures confidentiality of data (makes it unreadable to unauthorized parties but recoverable by authorized parties).  
+- **Hashing** – Transforms data into a fixed-size “digest” used primarily for verifying integrity. A hash cannot be reversed to recover the original content; it’s useful for checksums, password storage, and data integrity.
+
+---
+
+### 7. Putting It All Together
+
+- **Symmetric Encryption:** Fast and efficient for everyday data encryption, but needs a secure way to share the key.  
+- **Asymmetric Encryption:** Enables secure key exchange over insecure channels and digital signatures.  
+- **Hashing:** Checks data integrity or stores sensitive information (passwords) in a non-reversible form.
+
+Combining these cryptographic tools gives us the foundations of modern secure communication—whether it’s two generals planning strategy, or your browser securely connecting to an online store.
